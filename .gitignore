@@ -1,0 +1,24 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Test results
+load_test/results*.csv
+monitoring/metrics/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/

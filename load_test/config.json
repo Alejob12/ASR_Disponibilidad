@@ -1,0 +1,35 @@
+{
+  "alb_url": "http://<ALB_DNS_NAME>",
+  "concurrent_users": 100,
+  "duration_seconds": 600,
+  "ramp_up_seconds": 30,
+  "endpoints": [
+    {
+      "name": "login",
+      "method": "POST",
+      "path": "/auth/login",
+      "body": { "username": "demo", "password": "demo123" },
+      "weight": 30
+    },
+    {
+      "name": "validate_token",
+      "method": "GET",
+      "path": "/auth/validate",
+      "headers": { "Authorization": "Bearer <TOKEN>" },
+      "weight": 40
+    },
+    {
+      "name": "cost_summary",
+      "method": "GET",
+      "path": "/costs/summary?company_id=demo-corp",
+      "headers": { "Authorization": "Bearer <TOKEN>" },
+      "weight": 25
+    },
+    {
+      "name": "health_check",
+      "method": "GET",
+      "path": "/health",
+      "weight": 5
+    }
+  ]
+}

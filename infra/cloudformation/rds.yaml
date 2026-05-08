@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: RDS PostgreSQL db.t2.micro para el experimento de disponibilidad BITE.co
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+  EC2SecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: SG de las instancias EC2 (se le permite acceso al puerto 5432)
+  DBPassword:
+    Type: String
+    NoEcho: true
+
+Resources:
+
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow PostgreSQL from EC2
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref EC2SecurityGroupId
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnets para RDS BITE
+      SubnetIds: !Ref SubnetIds
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: bite-db
+      DBInstanceClass: db.t2.micro
+      Engine: postgres
+      EngineVersion: "15"
+      MasterUsername: biteadmin
+      MasterUserPassword: !Ref DBPassword
+      DBName: bitedb
+      AllocatedStorage: "20"
+      StorageType: gp2
+      VPCSecurityGroups:
+        - !GetAtt RDSSecurityGroup.GroupId
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      MultiAZ: false
+      PubliclyAccessible: false
+      DeletionProtection: false
+
+Outputs:
+  DBEndpoint:
+    Value: !GetAtt RDSInstance.Endpoint.Address
+  DBPort:
+    Value: !GetAtt RDSInstance.Endpoint.Port
