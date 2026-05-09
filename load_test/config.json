@@ -1,8 +1,8 @@
 {
-  "alb_url": "http://BiteSt-Alb16-gD1EOx83B8Xx-668050101.us-east-1.elb.amazonaws.com",
-  "concurrent_users": 100,
-  "duration_seconds": 600,
-  "ramp_up_seconds": 30,
+  "alb_url": "http://BiteSt-Alb16-NtlfiF5g18xZ-597072525.us-east-1.elb.amazonaws.com",
+  "concurrent_users": 75,
+  "duration_seconds": 250,
+  "ramp_up_seconds": 5,
   "endpoints": [
     {
       "name": "login",

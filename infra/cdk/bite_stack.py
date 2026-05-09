@@ -79,12 +79,23 @@ class BiteStack(Stack):
         db_sg.add_ingress_rule(app_sg, ec2.Port.tcp(5432))
 
         # ── IAM Role para EC2 ──────────────────────────────────────────────
-        # AWS Academy no permite crear roles IAM nuevos.
-        # Se usa el LabRole pre-existente que tiene AdministratorAccess.
-        ec2_role = iam.Role.from_role_arn(
-            self, "LabRole",
-            role_arn=f"arn:aws:iam::{config['account_id']}:role/LabRole",
-            mutable=False,
+        ec2_role = iam.Role(
+            self, "Ec2Role",
+            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
+            managed_policies=[
+                iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSSMManagedInstanceCore"),
+                iam.ManagedPolicy.from_aws_managed_policy_name("SecretsManagerReadWrite"),
+                iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess"),
+                iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchAgentServerPolicy"),
+            ],
+            inline_policies={
+                "CostExplorer": iam.PolicyDocument(statements=[
+                    iam.PolicyStatement(
+                        actions=["ce:GetCostAndUsage", "ce:GetCostForecast"],
+                        resources=["*"],
+                    )
+                ])
+            },
         )
 
         # ── RDS PostgreSQL ─────────────────────────────────────────────────
@@ -170,7 +181,7 @@ class BiteStack(Stack):
             "WorkingDirectory=/home/ec2-user/app/app",
             "EnvironmentFile=/home/ec2-user/app/.env",
             f"ExecStart=/home/ec2-user/app/app/venv/bin/gunicorn "
-            f"-w 4 -b 0.0.0.0:{config['app_port']} main:app",
+            f"-w 4 --threads 25 -b 0.0.0.0:{config['app_port']} main:app",
             "Restart=always",
             "[Install]",
             "WantedBy=multi-user.target",

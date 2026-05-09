@@ -1,7 +1,19 @@
 {
+  "account_id": "032080729446",
   "region": "us-east-1",
+  "vpc_id": "vpc-0f22d4dbd890cabce",
+  "subnet_ids": [
+    "subnet-00cfab09d8c90e9e7",
+    "subnet-063b0cb99c32f049b",
+    "subnet-06928cb16f8a599a9"
+  ],
+  "availability_zones": [
+    "us-east-1a",
+    "us-east-1c",
+    "us-east-1b"
+  ],
   "app_port": 5000,
-  "instance_type": "t2.micro",
+  "instance_type": "t3.micro",
   "min_instances": 2,
   "max_instances": 4,
   "desired_instances": 3,
