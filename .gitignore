@@ -19,6 +19,12 @@ monitoring/metrics/
 # macOS
 .DS_Store
 
+# CDK
+infra/cdk/cdk.out/
+infra/cdk/.venv/
+cdk.context.json
+deploy-outputs.json
+
 # IDE
 .vscode/
 .idea/

@@ -1,0 +1,17 @@
+{
+  "region": "us-east-1",
+  "app_port": 5000,
+  "instance_type": "t2.micro",
+  "min_instances": 2,
+  "max_instances": 4,
+  "desired_instances": 3,
+  "health_check_interval_seconds": 5,
+  "health_check_threshold": 2,
+  "db_name": "bitedb",
+  "db_username": "biteadmin",
+  "alarm_email": "tu-email@example.com",
+  "s3_reports_expiry_days": 90,
+  "cpu_alarm_threshold": 80,
+  "http_5xx_alarm_threshold": 5,
+  "github_repo": "https://github.com/Alejob12/ASR_Disponibilidad.git"
+}
