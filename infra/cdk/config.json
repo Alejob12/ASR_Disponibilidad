@@ -9,7 +9,7 @@
   "health_check_threshold": 2,
   "db_name": "bitedb",
   "db_username": "biteadmin",
-  "alarm_email": "tu-email@example.com",
+  "alarm_email": "lizarazobernalm8@gmail.com",
   "s3_reports_expiry_days": 90,
   "cpu_alarm_threshold": 80,
   "http_5xx_alarm_threshold": 5,
