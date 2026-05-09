@@ -155,7 +155,7 @@ class BiteStack(Stack):
             f"DB_NAME={config['db_name']}",
             f"DB_USER={config['db_username']}",
             "DB_PASSWORD=$DB_PASS",
-            "JWT_SECRET=$(openssl rand -hex 32)",
+            f"JWT_SECRET={config['jwt_secret']}",
             f"S3_REPORTS_BUCKET={bucket.bucket_name}",
             f"AWS_REGION={region}",
             "SES_SENDER=noreply@example.com",

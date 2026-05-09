@@ -13,5 +13,6 @@
   "s3_reports_expiry_days": 90,
   "cpu_alarm_threshold": 80,
   "http_5xx_alarm_threshold": 5,
-  "github_repo": "https://github.com/Alejob12/ASR_Disponibilidad.git"
+  "github_repo": "https://github.com/Alejob12/ASR_Disponibilidad.git",
+  "jwt_secret": "9c72b8864f4de80b3c2830bf01420f5ed0a6c03ece5c08d9a6fa4d18cb95b692"
 }
