@@ -1,5 +1,5 @@
 {
-  "alb_url": "http://<ALB_DNS_NAME>",
+  "alb_url": "http://BiteSt-Alb16-gD1EOx83B8Xx-668050101.us-east-1.elb.amazonaws.com",
   "concurrent_users": 100,
   "duration_seconds": 600,
   "ramp_up_seconds": 30,

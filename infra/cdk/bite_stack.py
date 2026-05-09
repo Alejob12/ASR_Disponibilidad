@@ -14,7 +14,7 @@ from aws_cdk import (
     aws_cloudwatch_actions as cw_actions,
     aws_ec2 as ec2,
     aws_elasticloadbalancingv2 as elbv2,
-    aws_iam as iam,
+    aws_iam as iam,  # solo from_role_arn
     aws_rds as rds,
     aws_s3 as s3,
     aws_sns as sns,
@@ -59,49 +59,39 @@ class BiteStack(Stack):
         # ── Security Groups ────────────────────────────────────────────────
         alb_sg = ec2.SecurityGroup(
             self, "AlbSg", vpc=vpc,
-            description="ALB – inbound HTTP desde internet",
+            description="ALB - inbound HTTP desde internet",
             allow_all_outbound=True,
         )
         alb_sg.add_ingress_rule(ec2.Peer.any_ipv4(), ec2.Port.tcp(80))
 
         app_sg = ec2.SecurityGroup(
             self, "AppSg", vpc=vpc,
-            description="EC2 – trafico desde ALB",
+            description="EC2 - trafico desde ALB",
             allow_all_outbound=True,
         )
         app_sg.add_ingress_rule(alb_sg, ec2.Port.tcp(config["app_port"]))
 
         db_sg = ec2.SecurityGroup(
             self, "DbSg", vpc=vpc,
-            description="RDS – trafico desde EC2",
+            description="RDS - trafico desde EC2",
             allow_all_outbound=False,
         )
         db_sg.add_ingress_rule(app_sg, ec2.Port.tcp(5432))
 
         # ── IAM Role para EC2 ──────────────────────────────────────────────
-        ec2_role = iam.Role(
-            self, "AppRole",
-            assumed_by=iam.ServicePrincipal("ec2.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name(
-                    "AmazonSSMManagedInstanceCore"
-                ),
-            ],
+        # AWS Academy no permite crear roles IAM nuevos.
+        # Se usa el LabRole pre-existente que tiene AdministratorAccess.
+        ec2_role = iam.Role.from_role_arn(
+            self, "LabRole",
+            role_arn=f"arn:aws:iam::{config['account_id']}:role/LabRole",
+            mutable=False,
         )
-        ec2_role.add_to_policy(iam.PolicyStatement(
-            actions=["ce:GetCostAndUsage"],
-            resources=["*"],
-        ))
-        ec2_role.add_to_policy(iam.PolicyStatement(
-            actions=["ses:SendEmail", "ses:SendRawEmail"],
-            resources=["*"],
-        ))
 
         # ── RDS PostgreSQL ─────────────────────────────────────────────────
         db_subnet_group = rds.SubnetGroup(
             self, "DbSubnetGroup",
             vpc=vpc,
-            description="BITE RDS – subnets",
+            description="BITE RDS - subnets",
             vpc_subnets=ec2.SubnetSelection(subnets=subnets[:2]),
             removal_policy=RemovalPolicy.DESTROY,
         )
@@ -128,23 +118,18 @@ class BiteStack(Stack):
         )
 
         assert db.secret is not None
-        ec2_role.add_to_policy(iam.PolicyStatement(
-            actions=["secretsmanager:GetSecretValue"],
-            resources=[db.secret.secret_arn],
-        ))
 
         # ── S3 Bucket para reportes ────────────────────────────────────────
+        # auto_delete_objects requiere Lambda/IAM — no disponible en Academy.
         bucket = s3.Bucket(
             self, "Reports",
             removal_policy=RemovalPolicy.DESTROY,
-            auto_delete_objects=True,
             lifecycle_rules=[
                 s3.LifecycleRule(
                     expiration=Duration.days(config["s3_reports_expiry_days"])
                 )
             ],
         )
-        bucket.grant_put(ec2_role)
 
         # ── User Data (bootstrap de la EC2 al arrancar) ────────────────────
         ud = ec2.UserData.for_linux()

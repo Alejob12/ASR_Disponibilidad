@@ -69,13 +69,21 @@ print(f"  VPC       : {config['vpc_id']}")
 print(f"  Subredes  : {', '.join(config['subnet_ids'])}")
 print(f"  AZs       : {', '.join(config['availability_zones'])}\n")
 
+# ── Obtener account ID para el LabRole ────────────────────────────────────
+import boto3 as _boto3
+_account = _boto3.client("sts").get_caller_identity()["Account"]
+config["account_id"] = _account
+
 # ── Sintetizar stack ───────────────────────────────────────────────────────
+# CliCredentialsStackSynthesizer: no requiere cdk bootstrap ni crear IAM roles
+# de CDK — compatible con AWS Academy (voclabs role sin iam:CreateRole).
 app = cdk.App()
 
 BiteStack(
     app,
     "BiteStack",
     config=config,
+    synthesizer=cdk.CliCredentialsStackSynthesizer(),
     env=cdk.Environment(region=config["region"]),
 )
 
