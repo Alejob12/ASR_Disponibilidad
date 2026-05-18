@@ -14,7 +14,7 @@ LOAD_TEST_DIR="$ROOT/load_test"
 LOAD_SCRIPT="$LOAD_TEST_DIR/load_test.py"
 LOAD_CONFIG="$LOAD_TEST_DIR/config.json"
 
-ASG_NAME="BiteStack-AsgASGD1D7B4E2-knPFPiQWLKnJ"
+ASG_NAME="BiteStack-AsgASGD1D7B4E2-zbuWNyOmiwka"
 
 # ── Detectar python3 con aiohttp ──────────────────────────────────────────────
 # macOS puede tener varios python3; buscamos el que tenga aiohttp instalado
